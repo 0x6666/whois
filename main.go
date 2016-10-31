@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"fmt"
-
 	"strings"
 
 	"github.com/domainr/whois"
@@ -65,6 +63,7 @@ forever:
 }
 
 func checkStatus() {
+	log.Info("start check ddns.site")
 	query := "ddns.site"
 	request, err := whois.NewRequest(query)
 	response, err := whois.DefaultClient.Fetch(request)
@@ -118,7 +117,7 @@ func checkStatus() {
 		return
 	}
 
-	fmt.Println(statuses[0])
+	log.Info("end check ddns.site")
 }
 
 func sendToMail(user, password, host, to, subject, body string) error {
