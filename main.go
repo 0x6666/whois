@@ -37,13 +37,14 @@ func cdCWD() error {
 func main() {
 
 	log.SetLevel(log.LevelAll)
-	defer log.Close()
 
 	if err := cdCWD(); err != nil {
 		log.Error(err.Error())
 	}
 
 	log.SetLogFile("./check_domain_status.log")
+	log.SetLevel(log.LevelAll)
+	defer log.Close()
 
 	interrupSig := make(chan os.Signal)
 	signal.Notify(interrupSig, os.Interrupt)
@@ -52,13 +53,15 @@ func main() {
 
 	//没个小时检查一次
 forever:
-	select {
-	case <-interrupSig:
-		break forever
-	case <-killSig:
-		break forever
-	case <-time.After(time.Hour):
-		go checkStatus()
+	for {
+		select {
+		case <-interrupSig:
+			break forever
+		case <-killSig:
+			break forever
+		case <-time.After(time.Hour):
+			go checkStatus()
+		}
 	}
 }
 
